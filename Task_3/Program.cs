@@ -29,66 +29,96 @@ namespace Task_3
         }
     }
 
+    
     class Program
     {
+        public void CheckPositivity(decimal a)
+        {
+            if (a < 0)
+            {
+                throw new Exception("Число менше нуля");
+            }
+        }
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Введіть курс долара по відношенню до гривні");
-            decimal dollarCurr = Convert.ToDecimal(Console.ReadLine());
-            Console.WriteLine("Введіть курс євро по відношенню до гривні");
-            decimal euroCurr = Convert.ToDecimal(Console.ReadLine());
-            Converter converter = new Converter(dollarCurr, euroCurr);
-            bool cycle = true;
-            do
+            try
             {
-                Console.WriteLine("Введіть у яку валюту хочете конвертувати (євро/долар/гривня)");
-                string currency = Console.ReadLine()!;
-                if (currency == "євро")
+                Program program = new Program();
+                Console.WriteLine("Введіть курс долара по відношенню до гривні");
+                decimal dollarCurr = Convert.ToDecimal(Console.ReadLine());
+                program.CheckPositivity(dollarCurr);
+                Console.WriteLine("Введіть курс євро по відношенню до гривні");
+                decimal euroCurr = Convert.ToDecimal(Console.ReadLine());
+                program.CheckPositivity(euroCurr);
+                Converter converter = new Converter(dollarCurr, euroCurr);
+                bool cycle = true;
+                do
                 {
-                    Console.WriteLine("Введіть кількість гривень");
-                    decimal hryvnia = Convert.ToDecimal(Console.ReadLine());
-                    Console.WriteLine($"Результат: {converter.convertHryvniaToEuro(hryvnia)}");
-                }
-                else if (currency == "долар")
-                {
-                    Console.WriteLine("Введіть кількість гривень");
-                    decimal hryvnia = Convert.ToDecimal(Console.ReadLine());
-                    Console.WriteLine($"Результат: {converter.convertHryvniaToDollar(hryvnia)}");
-                }
-                else if (currency == "гривня")
-                {
-                    Console.WriteLine("Введіть яку валюту хочете конвертувати (євро/долар)");
-                    string toCurrency = Console.ReadLine()!;
-                    if (toCurrency == "євро")
+                    Console.WriteLine("Введіть у яку валюту хочете конвертувати (€/$/₴)");
+                    string currency = Console.ReadLine()!;
+                    if (currency == "€")
                     {
-                        Console.WriteLine("Введіть кількість євро");
-                        decimal eur = Convert.ToDecimal(Console.ReadLine());
-                        Console.WriteLine($"Результат: {converter.convertEuroToHryvnia(eur)}");
+                        Console.WriteLine("Введіть кількість гривень");
+                        decimal hryvnia = Convert.ToDecimal(Console.ReadLine());
+                        program.CheckPositivity(hryvnia);
+                        Console.WriteLine($"Результат: {converter.convertHryvniaToEuro(hryvnia)}");
                     }
-                    else if (toCurrency == "долар")
+                    else if (currency == "$")
                     {
-                        Console.WriteLine("Введіть кількість доларів");
-                        decimal dollar = Convert.ToDecimal(Console.ReadLine());
-                        Console.WriteLine($"Результат: {converter.convertDollarToHryvnia(dollar)}");
+                        Console.WriteLine("Введіть кількість гривень");
+                        decimal hryvnia = Convert.ToDecimal(Console.ReadLine());
+                        program.CheckPositivity(hryvnia);
+                        Console.WriteLine($"Результат: {converter.convertHryvniaToDollar(hryvnia)}");
+                    }
+                    else if (currency == "₴")
+                    {
+                        Console.WriteLine("Введіть яку валюту хочете конвертувати (€/$)");
+                        string toCurrency = Console.ReadLine()!;
+                        if (toCurrency == "€")
+                        {
+                            Console.WriteLine("Введіть кількість євро");
+                            decimal eur = Convert.ToDecimal(Console.ReadLine());
+                            program.CheckPositivity(eur);
+                            Console.WriteLine($"Результат: {converter.convertEuroToHryvnia(eur)}");
+                        }
+                        else if (toCurrency == "$")
+                        {
+                            Console.WriteLine("Введіть кількість доларів");
+                            decimal dollar = Convert.ToDecimal(Console.ReadLine());
+                            program.CheckPositivity(dollar);
+                            Console.WriteLine($"Результат: {converter.convertDollarToHryvnia(dollar)}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Таку валюту конвертер не конвертує");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Таку валюту конвертер не конвертує");
+                        Console.WriteLine("У таку валюту конвертер не конвертує");
                     }
+                    Console.WriteLine("Продовжити? (true/false)");
+                    if (bool.Parse(Console.ReadLine()!) == false)
+                    {
+                        cycle = false;
+                    }
+                    
                 }
-                else
-                {
-                    Console.WriteLine("У таку валюту конвертер не конвертує");
-                }
-                Console.WriteLine("Продовжити? (true/false)");
-                if (bool.Parse(Console.ReadLine()!) == false)
-                {
-                    cycle = false;
-                }
+                while (cycle);
             }
-            while (cycle);
-            
-            
+            catch (FormatException)
+            {
+                Console.WriteLine("Помилка введення - неправильний формат");
+            }
+            catch (DivideByZeroException)
+            {
+                Console.WriteLine("Під час конвертації відбулось ділення на нуль, перевірте введений курс");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"{exception.Message}");
+            }
         }
     }
 }
